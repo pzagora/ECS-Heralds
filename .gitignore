@@ -34,3 +34,16 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+.vscode/launch.json
+.idea/.idea.aosc/riderModule.iml
+.idea/.idea.aosc/.idea/contentModel.xml
+.idea/.idea.aosc/.idea/indexLayout.xml
+.idea/.idea.aosc/.idea/modules.xml
+.idea/.idea.aosc/.idea/vcs.xml
+.idea/.idea.aosc/.idea/workspace.xml
+Assets/Plugins/Editor/JetBrains.meta
+Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll
+Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll.meta
+Assets/Resources/GameData/Basic_IDs.meta
+/.idea
