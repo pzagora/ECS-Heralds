@@ -29,20 +29,25 @@ public class QuadrantSystem : ComponentSystem {
 
     [BurstCompile]
     [RequireComponentTag(typeof(QuadrantEntity))]
-    private struct SetQuadrantDataHashMapJob : IJobForEachWithEntity<Translation, Collideable, PhysicsCollider> {
+    private struct SetQuadrantDataHashMapJob : IJobForEachWithEntity<Translation, Collideable, PhysicsCollider>
+    {
+        public NativeMultiHashMap<int, QuadrantData>.Concurrent QuadrantMultiHashMap;
 
-        public NativeMultiHashMap<int, QuadrantData>.Concurrent quadrantMultiHashMap;
-
-        public void Execute(Entity entity, int index, ref Translation translation, ref Collideable col, ref PhysicsCollider collider) {
+        public void Execute(Entity entity,
+            int index,
+            ref Translation translation,
+            ref Collideable col,
+            ref PhysicsCollider collider)
+        {
             int hashMapKey = GetPositionHashMapKey(translation.Value);
-            quadrantMultiHashMap.Add(hashMapKey, new QuadrantData {
+            QuadrantMultiHashMap.Add(hashMapKey, new QuadrantData
+            {
                 entity = entity,
                 position = translation.Value,
                 collisionType = col.Type,
                 collider = collider
             });
         }
-
     }
 
     protected override void OnCreate() {
@@ -56,7 +61,12 @@ public class QuadrantSystem : ComponentSystem {
     }
 
     protected override void OnUpdate() {
-        var entityQuery = GetEntityQuery(typeof(Translation), typeof(Collideable), typeof(PhysicsCollider), typeof(QuadrantEntity), ComponentType.Exclude<DeadData>());
+        var entityQuery = GetEntityQuery(
+            typeof(Translation), 
+            typeof(Collideable), 
+            typeof(PhysicsCollider), 
+            typeof(QuadrantEntity), 
+            ComponentType.Exclude<DeadData>());
 
         quadrantMultiHashMap.Clear();
         if (entityQuery.CalculateEntityCount() > quadrantMultiHashMap.Capacity) {
@@ -64,7 +74,7 @@ public class QuadrantSystem : ComponentSystem {
         }
 
         var setQuadrantDataHashMapJob = new SetQuadrantDataHashMapJob {
-            quadrantMultiHashMap = quadrantMultiHashMap.ToConcurrent(),
+            QuadrantMultiHashMap = quadrantMultiHashMap.ToConcurrent(),
         };
         var jobHandle = setQuadrantDataHashMapJob.Schedule(entityQuery);
         jobHandle.Complete();

@@ -3,3 +3,4 @@
 public struct DeadData : IComponentData
 {
 }
+

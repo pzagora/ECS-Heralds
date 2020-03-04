@@ -71,10 +71,6 @@ public class PlayerShootingSystem : ComponentSystem
 
     private void Shoot(Entity entity, AudioSource audio, FirstUpgrade firstUpgrade)
     {
-        timer = 0f;
-
-        audio.Play();
-
         var mainCamera = Camera.main;
         if (mainCamera == null)
             return;
@@ -86,7 +82,11 @@ public class PlayerShootingSystem : ComponentSystem
         var camRay = mainCamera.ScreenPointToRay(mousePos);
         if (Physics.Raycast(camRay, out var shootHit, camRayLen, floor))
         {
-            var damageObject = Object.Instantiate(HeraldsBootstrap.Settings.DamagePrefab, shootHit.point, Quaternion.identity);
+            var damageObject = Object.Instantiate(
+                HeraldsBootstrap.Settings.DamagePrefab,
+                shootHit.point,
+                Quaternion.identity
+                );
             damageObject.GetComponent<Attacker>().SetSource(entity);
             damageObject.GetComponent<Attacker>().SetDamage(CalculateDamage(firstUpgrade));
         }
