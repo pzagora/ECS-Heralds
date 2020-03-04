@@ -75,8 +75,8 @@ public class MenuController : MonoBehaviour
                 });
         });
     }
-    
-    public void LogInOrRegister()
+
+    private void LogInOrRegister()
     {
         var user = Login.text;
         var password = Password.text;
@@ -130,7 +130,7 @@ public class MenuController : MonoBehaviour
         Tween.Delay(1.5f, LoadGame);
     }
 
-    private void OnLoginError(PlayFabError error) //PlayFabError
+    private void OnLoginError(PlayFabError error)
     {
         if (error.Error == PlayFabErrorCode.InvalidParams && error.ErrorDetails.ContainsKey("Password"))
         {

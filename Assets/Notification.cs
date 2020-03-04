@@ -8,7 +8,14 @@ public class Notification : MonoBehaviour
     public void Init(string killer, string killed)
     {
         KillLogText = transform.GetChild(1).GetComponent<Text>();
-        KillLogText.text = $"<b>{killer}</b> killed <b>{killed}</b>";
+        if (killed == killer)
+        {
+            KillLogText.text = $"<b>{killer}</b> killed himself";
+        }
+        else
+        {
+            KillLogText.text = $"<b>{killer}</b> killed <b>{killed}</b>";
+        }
         Destroy(gameObject, 4f);
     }
 }

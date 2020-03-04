@@ -39,12 +39,13 @@ public class ItemPicker : MonoBehaviour
         if (other.gameObject == _Player && Input.GetKeyDown(KeyCode.E))
         {
             _ItemChangeEntity = _EntityManager.CreateEntity(_ItemChangeArchetype);
-            _EntityManager.SetComponentData(_ItemChangeEntity, new ItemChange
-            {
-                Target = _Player.GetComponent<GameObjectEntity>().Entity,
-                FirstUpgrade = FirstUpgrade,
-                SecondUpgrade = SecondUpgrade
-            });
+            _EntityManager.SetComponentData(_ItemChangeEntity,
+                new ItemChange
+                {
+                    Target = _Player.GetComponent<GameObjectEntity>().Entity,
+                    FirstUpgrade = FirstUpgrade,
+                    SecondUpgrade = SecondUpgrade
+                });
             HeraldsBootstrap.Settings.GameUi.OnUpgradeSwap(FirstUpgrade, SecondUpgrade);
             Destroy(gameObject);
         }

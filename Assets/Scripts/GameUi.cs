@@ -40,6 +40,8 @@ public class GameUi : MonoBehaviour
     private const string DeathText = "Game Over";
     [SerializeField] private Color VictoryColour;
     [SerializeField] private Color DeathColour;
+
+    [SerializeField] private Text PlayersAliveText;
     
     private int _Score;
     private Dictionary<int, List<int>> _KillLog;
@@ -58,13 +60,14 @@ public class GameUi : MonoBehaviour
         CurrentOptionsPosition = position;
         position = new Vector3(position.x, -300, position.z);
         OptionsPanel.position = position;
-        
+
         OptionsPanel.gameObject.SetActive(false);
         GameOverText.gameObject.SetActive(false);
         ScoreText.gameObject.SetActive(false);
         _PlayerDied = false;
         _Score = 0;
         _KillLog = new Dictionary<int, List<int>>();
+        
         for (int i = 0; i < _Nicknames.Length; i++)
         {
             _Nicknames[i] = i == 0 
@@ -144,12 +147,6 @@ public class GameUi : MonoBehaviour
 
     public void LogKill(int killer, int killed)
     {
-        FadeScreen.DOFade(0f, 0).OnComplete(() =>
-        {
-            var notification = Instantiate(NotificationPrefab, NotificationParent);
-            notification.AddComponent<Notification>().Init(_Nicknames[killer], _Nicknames[killed]);
-        });
-        
         _KillLog[killer].Add(killed);
 
         if (killer == 1)
@@ -163,6 +160,17 @@ public class GameUi : MonoBehaviour
             killAmount += killList.Count;
         }
 
+        FadeScreen.DOFade(0f, 0).OnComplete(() =>
+        {
+            var notification = Instantiate(NotificationPrefab, NotificationParent);
+            notification.AddComponent<Notification>().Init(_Nicknames[killer], _Nicknames[killed]);
+
+            if (PlayersAliveText != null)
+            {
+                PlayersAliveText.text = $"Players Alive: <i><b><size=18>{20 - killAmount}</size></b> / 20</i>";
+            }
+        });
+        
         if (killAmount == 19 && !_PlayerDied)
         {
             OnVictory();
