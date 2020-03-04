@@ -209,25 +209,31 @@ public class PhysicsJobSystem : JobComponentSystem
 
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
-        EntityQuery unitQuery = GetEntityQuery(typeof(CollisionData), ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<PhysicsCollider>());
-        NativeArray<CollisionData>  collisionData = new NativeArray<CollisionData>(unitQuery.CalculateEntityCount(), Allocator.TempJob);
+        var unitQuery = GetEntityQuery(
+            typeof(CollisionData),
+            ComponentType.ReadOnly<Translation>(),
+            ComponentType.ReadOnly<PhysicsCollider>()
+            );
+        var  collisionData = new NativeArray<CollisionData>(
+            unitQuery.CalculateEntityCount(),
+            Allocator.TempJob
+            );
 
-        PhysicsQuadrantJob physicsQuadrantJob = new PhysicsQuadrantJob
+        var physicsQuadrantJob = new PhysicsQuadrantJob
         {
             quadrantMultiHashMap = QuadrantSystem.quadrantMultiHashMap,
             collisionDatas = collisionData
         };
-        JobHandle jobHandle = physicsQuadrantJob.Schedule(this, inputDeps);
-
-        SetComponentJob setComponentJob = new SetComponentJob
+        var jobHandle = physicsQuadrantJob.Schedule(this, inputDeps);
+        var setComponentJob = new SetComponentJob
         {
             collisionDatas = collisionData,
-            entityCommandBuffer = _EndSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent()
+            entityCommandBuffer = _EndSimulationEntityCommandBufferSystem
+                .CreateCommandBuffer()
+                .ToConcurrent()
         };
         jobHandle = setComponentJob.Schedule(this, jobHandle);
-        
         _EndSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
-
         return jobHandle;
     }
 }

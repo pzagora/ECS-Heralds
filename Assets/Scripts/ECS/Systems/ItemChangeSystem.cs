@@ -15,8 +15,7 @@ public class ItemChangeSystem : JobComponentSystem
 
     private struct ItemChangeJob : IJobForEachWithEntity<ItemChange>
     {
-        public EntityCommandBuffer.Concurrent Ecb;
-
+        public EntityCommandBuffer.Concurrent CommandBuffer;
         [ReadOnly] public ComponentDataFromEntity<PlayerData> GunData;
         
         public void Execute(Entity entity, int index, ref ItemChange itemChange)
@@ -25,11 +24,21 @@ public class ItemChangeSystem : JobComponentSystem
             
             if (itemChange.FirstUpgrade == FirstUpgrade.None)
             {
-                Ecb.SetComponent(index, target, new PlayerData{FirstUpgrade = GunData[target].FirstUpgrade, SecondUpgrade = itemChange.SecondUpgrade});
+                CommandBuffer.SetComponent(index, target, 
+                    new PlayerData
+                    {
+                        FirstUpgrade = GunData[target].FirstUpgrade,
+                        SecondUpgrade = itemChange.SecondUpgrade
+                    });
             }
             else if (itemChange.SecondUpgrade == SecondUpgrade.None)
             {
-                Ecb.SetComponent(index, target, new PlayerData{FirstUpgrade = itemChange.FirstUpgrade, SecondUpgrade = GunData[target].SecondUpgrade});
+                CommandBuffer.SetComponent(index, target, 
+                    new PlayerData
+                    {
+                        FirstUpgrade = itemChange.FirstUpgrade, 
+                        SecondUpgrade = GunData[target].SecondUpgrade
+                    });
             }
         }
     }
@@ -38,7 +47,7 @@ public class ItemChangeSystem : JobComponentSystem
     {
         var job = new ItemChangeJob
         {
-            Ecb = _Barrier.CreateCommandBuffer().ToConcurrent(),
+            CommandBuffer = _Barrier.CreateCommandBuffer().ToConcurrent(),
             GunData = GetComponentDataFromEntity<PlayerData>()
         };
         inputDeps = job.Schedule(this, inputDeps);

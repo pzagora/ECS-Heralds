@@ -5,18 +5,18 @@ using UnityStandardAssets.CrossPlatformInput;
 [DisableAutoCreation]
 public class PlayerInputSystem : ComponentSystem
 {
-    private EntityQuery query;
+    private EntityQuery _Query;
 
     protected override void OnCreate()
     {
-        query = GetEntityQuery(
+        _Query = GetEntityQuery(
             ComponentType.ReadOnly<PlayerInputData>(),
             ComponentType.Exclude<DeadData>());
     }
 
     protected override void OnUpdate()
     {
-        Entities.With(query).ForEach(entity =>
+        Entities.With(_Query).ForEach(entity =>
         {
             var newInput = new PlayerInputData
             {
